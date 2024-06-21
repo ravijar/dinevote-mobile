@@ -12,8 +12,8 @@ export default function Navigation() {
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="ChooseLocation" component={ChooseLocation} options={{ presentation: "fullScreenModal"}} />
                 <Stack.Screen name="Home" component={Home} />
-                <Stack.Screen name="ChooseLocation" component={ChooseLocation} />
                 <Stack.Screen name="ChoosePeople" component={ChoosePeople} />
                 <Stack.Screen name="Vote" component={Vote} />
             </Stack.Navigator>
