@@ -1,5 +1,5 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text, TextInput } from 'react-native'
+import React, { useState } from 'react'
 import MapView, { Circle, Marker } from 'react-native-maps'
 import { themeColors } from '../theme'
 import { StatusBar } from 'expo-status-bar'
@@ -17,7 +17,11 @@ export default function ChooseLocation() {
     radius: 0.5
   }
 
-  
+  const [selectedlocationType, setSelectedLocationType] = useState("restaurant")
+
+  const locationTypeHandler = (type) => {
+    setSelectedLocationType(type)
+  }
 
   return (
     <View className="flex-1">
@@ -56,9 +60,24 @@ export default function ChooseLocation() {
       {/* bottom menu */}
       <BottomMenu>
         <View className="flex-row justify-evenly">
-          {locationTypes.map((locationType, index) => <Avatar key={index} image={locationType.image} size={40} />)}
-        </View>
+          {Object.values(locationTypes).map(locationType => {
+            let isSelected = locationType.key === selectedlocationType
+            let textClass = isSelected ? "font-extrabold text-gray-800" : "font-semibold text-gray-500"
 
+            return (
+              <View key={locationType.key}>
+                <Avatar
+                  key={locationType.key}
+                  image={locationType.image}
+                  size={40}
+                  selected={isSelected}
+                  onPressHandler={() => locationTypeHandler(locationType.key)}
+                />
+                <Text className={"text-xs text-center mt-1 " + textClass}>{locationType.displayName}</Text>
+              </View>
+            )
+          })}
+        </View>
       </BottomMenu>
     </View>
   )
