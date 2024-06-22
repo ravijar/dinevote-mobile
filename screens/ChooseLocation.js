@@ -21,6 +21,10 @@ export default function ChooseLocation() {
   const [selectedlocationType, setSelectedLocationType] = useState("restaurant")
   const [radius, setRadius] = useState(0);
   const [radiusInput, setRadiusInput] = useState("0");
+  const [markerPosition, setMarkerPosition] = useState({
+    latitude: locationData.latitute,
+    longitude: locationData.longitude
+  })
 
   const locationTypeHandler = (type) => {
     setSelectedLocationType(type)
@@ -75,22 +79,18 @@ export default function ChooseLocation() {
           mapType='standard'
         >
           <Marker
-            coordinate={{
-              latitude: locationData.latitute,
-              longitude: locationData.longitude
-            }}
+            coordinate={markerPosition}
+            draggable
+            onDragEnd={(e) => setMarkerPosition(e.nativeEvent.coordinate)}
             pinColor={themeColors.bgColor(1)}
             title="Your Location"
-            description={`${locationData.latitute}, ${locationData.longitude}`}
+            description={`${parseFloat(markerPosition.latitude).toFixed(5)}, ${parseFloat(markerPosition.longitude).toFixed(5)}`}
           />
           <Circle
-            center={{
-              latitude: locationData.latitute,
-              longitude: locationData.longitude
-            }}
+            center={markerPosition}
             radius={radius * 1000}
-            strokeColor={themeColors.bgColor(1)}
-            fillColor={themeColors.bgColor(0.3)}
+            strokeColor={themeColors.bgColor(0.8)}
+            fillColor={themeColors.bgColor(0.2)}
           />
         </MapView>
 
