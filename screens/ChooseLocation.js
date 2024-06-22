@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import MapView, { Circle, Marker } from 'react-native-maps'
 import { themeColors } from '../theme'
 import { StatusBar } from 'expo-status-bar'
@@ -7,6 +7,7 @@ import BottomMenu from '../components/BottomMenu'
 import Avatar from '../components/Avatar'
 import { locationTypes } from '../constants'
 import { MaterialIcons } from '@expo/vector-icons'
+import * as Location from 'expo-location'
 
 export default function ChooseLocation() {
 
@@ -21,10 +22,25 @@ export default function ChooseLocation() {
   const [selectedlocationType, setSelectedLocationType] = useState("restaurant")
   const [radius, setRadius] = useState(0);
   const [radiusInput, setRadiusInput] = useState("0");
-  const [markerPosition, setMarkerPosition] = useState({
-    latitude: locationData.latitute,
-    longitude: locationData.longitude
-  })
+  const [markerPosition, setMarkerPosition] = useState(null)
+
+  useEffect(() => {
+    fetchLocation()
+  }, [])
+
+  const fetchLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      Alert.alert('Permission to access location was denied')
+      return
+    }
+
+    let location = await Location.getCurrentPositionAsync({})
+    setMarkerPosition({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    })
+  }
 
   const locationTypeHandler = (type) => {
     setSelectedLocationType(type)
@@ -60,6 +76,14 @@ export default function ChooseLocation() {
     })
   }
 
+  if (!markerPosition) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <TouchableWithoutFeedback onPress={() => {
       Keyboard.dismiss()
@@ -70,8 +94,8 @@ export default function ChooseLocation() {
         {/* map */}
         <MapView
           initialRegion={{
-            latitude: locationData.latitute,
-            longitude: locationData.longitude,
+            latitude: markerPosition.latitude,
+            longitude: markerPosition.longitude,
             latitudeDelta: locationData.latitudeDelta,
             longitudeDelta: locationData.longitudeDelta
           }}
@@ -97,11 +121,11 @@ export default function ChooseLocation() {
         {/* bottom menu */}
         <BottomMenu>
           <Text className="text-xl font-bold text-center text-gray-600 mb-4">Map Options</Text>
-          <View className="flex-row mb-5">
+          <View className="flex-row mb-5 justify-between">
+
+            {/* radius input */}
             <View className="flex-row basis-3/4 items-center">
               <Text className="text-lg font-semibold text-center text-gray-500 ml-3">Radius (km): </Text>
-
-              {/* radius input */}
               <View className="flex-row flex-1 rounded-full border border-gray-300 p-1 ml-2">
                 <TouchableOpacity onPress={decrementRadius}>
                   <View className="rounded-l-full p-2 justify-start" style={{ backgroundColor: themeColors.bgColor(0.2) }}>
@@ -123,6 +147,15 @@ export default function ChooseLocation() {
                   </View>
                 </TouchableOpacity>
               </View>
+            </View>
+
+            {/* my location button */}
+            <View className="justify-center mr-4">
+              <TouchableOpacity onPress={fetchLocation}>
+                <View className="rounded-full p-2 justify-center" style={{ backgroundColor: themeColors.bgColor(0.3) }}>
+                  <MaterialIcons name="my-location" size={32} color={themeColors.text(0.8)} />
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
 
