@@ -166,7 +166,7 @@ export default function ChooseLocation() {
               let textClass = isSelected ? "font-extrabold text-gray-800" : "font-semibold text-gray-500"
 
               return (
-                <View key={locationType.key}>
+                <View key={locationType.key} className="items-center">
                   <Avatar
                     key={locationType.key}
                     image={locationType.image}
