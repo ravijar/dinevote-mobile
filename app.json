@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "dinevote-mobile",
+    "name": "ravijar",
     "slug": "dinevote-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,6 +15,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.ravijar.dinevote",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -22,6 +23,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ad8a679f-864c-4522-b9b5-ac3f79a2cc23"
+      }
     }
   }
 }
