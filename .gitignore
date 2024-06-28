@@ -36,3 +36,6 @@ yarn-error.*
 
 # build
 android
+
+# secrets
+.env

@@ -3,15 +3,16 @@ import React, { useState, useEffect } from 'react'
 import * as WebBrowser from 'expo-web-browser'
 import * as Google from 'expo-auth-session/providers/google'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { ANDROID_CLIENT_ID, IOS_CLIENT_ID, WEB_CLIENT_ID } from '@env'
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
     const [userInfo, setUserInfo] = useState(null)
     const [request, response, promptAsync] = Google.useAuthRequest({
-        androidClientId: "789525025385-o14e3i8kq8agcg5ukbqt5o91l0d2il13.apps.googleusercontent.com",
-        iosClientId: "789525025385-h6adl8ude2ne8l4nqrdn79vu3elhkcu1.apps.googleusercontent.com",
-        webClientId: "789525025385-huvg1nuokos6nk2j3fsavh64lt6o3qav.apps.googleusercontent.com"
+        androidClientId: ANDROID_CLIENT_ID,
+        iosClientId: IOS_CLIENT_ID,
+        webClientId: WEB_CLIENT_ID,
     })
 
     useEffect(() => {
