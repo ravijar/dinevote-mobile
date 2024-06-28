@@ -5,6 +5,7 @@ import Home from './screens/Home';
 import ChooseLocation from './screens/ChooseLocation';
 import ChoosePeople from './screens/ChoosePeople';
 import Vote from './screens/Vote';
+import Login from './screens/Login';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,6 +13,7 @@ export default function Navigation() {
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="ChooseLocation" component={ChooseLocation} options={{ presentation: "fullScreenModal"}} />
                 <Stack.Screen name="Home" component={Home} />
                 <Stack.Screen name="ChoosePeople" component={ChoosePeople} />

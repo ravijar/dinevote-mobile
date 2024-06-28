@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ravijar",
+    "name": "dinevote",
     "slug": "dinevote-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,6 +12,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.ravijar.dinevote",
       "supportsTablet": true
     },
     "android": {
@@ -28,6 +29,7 @@
       "eas": {
         "projectId": "ad8a679f-864c-4522-b9b5-ac3f79a2cc23"
       }
-    }
+    },
+    "scheme": "dinevote"
   }
 }
