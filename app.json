@@ -30,6 +30,9 @@
         "projectId": "ad8a679f-864c-4522-b9b5-ac3f79a2cc23"
       }
     },
-    "scheme": "dinevote"
+    "scheme": "dinevote",
+    "expo": {
+      "plugins": ["@react-native-google-signin/google-signin"]
+    }
   }
 }

@@ -1,57 +1,71 @@
-import { View, Text, Button } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import * as WebBrowser from 'expo-web-browser'
-import * as Google from 'expo-auth-session/providers/google'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { ANDROID_CLIENT_ID, IOS_CLIENT_ID, WEB_CLIENT_ID } from '@env'
+import {
+    GoogleSignin,
+    GoogleSigninButton,
+    statusCodes,
+} from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { WEB_CLIENT_ID, ANDROID_CLIENT_ID } from '@env';
+import { View } from 'react-native';
+import { useEffect } from 'react';
 
-WebBrowser.maybeCompleteAuthSession();
-
-export default function Login() {
-    const [userInfo, setUserInfo] = useState(null)
-    const [request, response, promptAsync] = Google.useAuthRequest({
-        androidClientId: ANDROID_CLIENT_ID,
-        iosClientId: IOS_CLIENT_ID,
-        webClientId: WEB_CLIENT_ID,
-    })
-
-    useEffect(() => {
-        handleSignIn()
-    }, [response])
-
-    async function handleSignIn() {
-        const user = await AsyncStorage.getItem("@user")
-        if (!user) {
-            if (response?.type === "success") {
-                await getUserInfo(response.authentication.accessToken)
-            }
-        } else {
-            setUserInfo(JSON.parse(user))
-        }
+export const signOut = async () => {
+    try {
+        await GoogleSignin.signOut();
+        await AsyncStorage.removeItem('@userInfo');
+    } catch (error) {
+        console.log(error);
     }
-
-    const getUserInfo = async (token) => {
-        if (!token) return
-        try {
-            const response = await fetch(
-                "https://www.googleapis.com/userinfo/v2/me",
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            )
-            const user = await response.json()
-            await AsyncStorage.setItem("@user", JSON.stringify(user))
-            setUserInfo(user)
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    return (
-        <View className="flex-1 items-center justify-center">
-            <Text>{JSON.stringify(userInfo)}</Text>
-            <Button title='Sign in' onPress={() => promptAsync()}/>
-            <Button title='Sign out' onPress={() => AsyncStorage.removeItem("@user")}/>
-        </View>
-    )
 }
+
+export default function Login({ navigation }) {
+    useEffect(() => {
+        const checkUserInfo = async () => {
+            const userInfo = await AsyncStorage.getItem('@userInfo');
+            if (userInfo) {
+                navigation.navigate('Home');
+            }
+        };
+
+        GoogleSignin.configure({
+            webClientId: WEB_CLIENT_ID,
+            androidClientId: ANDROID_CLIENT_ID,
+            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+        });
+
+        checkUserInfo();
+    }, [navigation]);
+
+    const googleSignIn = async () => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            console.log(JSON.stringify(userInfo));
+            await AsyncStorage.setItem('@userInfo', JSON.stringify(userInfo));
+            navigation.navigate('Home');
+        } catch (error) {
+            switch (error.code) {
+                case statusCodes.SIGN_IN_CANCELLED:
+                    console.log('cancelled');
+                    break;
+                case statusCodes.IN_PROGRESS:
+                    console.log('in progress');
+                    break;
+                case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                    console.log('play services not available');
+                    break;
+                default:
+                    console.log(error);
+            }
+        }
+    }
+
+        return (
+            <View className="flex-1 items-center justify-center bg-white">
+                <GoogleSigninButton
+                    size={GoogleSigninButton.Size.Wide}
+                    color={GoogleSigninButton.Color.Dark}
+                    onPress={googleSignIn}
+                />
+            </View>
+        )
+    }
